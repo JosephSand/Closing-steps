@@ -1,0 +1,278 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Popsy Pop | Closing Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .step-transition {
+            transition: all 0.3s ease-in-out;
+        }
+        .progress-bar {
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card {
+            border-radius: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .custom-checkbox {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        input:checked + .custom-checkbox {
+            background-color: #3b82f6;
+            border-color: #3b82f6;
+        }
+        input:checked + .custom-checkbox i {
+            display: block;
+        }
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            top: 0;
+            opacity: 0;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-4">
+
+    <!-- Header -->
+    <header class="w-full max-w-md mt-4 mb-6 text-center">
+        <h1 class="text-2xl font-black text-blue-600 tracking-tight uppercase">Popsy Pop</h1>
+        <p class="text-slate-500 font-medium">Daily Closing Procedures</p>
+    </header>
+
+    <!-- Progress Tracker -->
+    <div class="w-full max-w-md bg-white rounded-full h-2 mb-6 shadow-sm overflow-hidden">
+        <div id="progressBar" class="progress-bar h-full bg-blue-500 w-0"></div>
+    </div>
+
+    <!-- Main Container -->
+    <main id="appContent" class="w-full max-w-md relative">
+        <!-- Steps will be injected here -->
+    </main>
+
+    <script>
+        const steps = [
+            {
+                id: 1,
+                title: "Waste Management",
+                icon: "fa-trash-can",
+                tasks: [
+                    "Throw the garbage from the truck into the dumpster."
+                ],
+                useLetters: false,
+                instruction: "Ensure no bags are left inside the vehicle overnight to prevent odors/pests."
+            },
+            {
+                id: 2,
+                title: "Machine Shutdown",
+                icon: "fa-ice-cream",
+                tasks: [
+                    "Turn off the Ice Cream Machine."
+                ],
+                useLetters: false,
+                instruction: "Check the panel instructions. Ensure the toggle is set to OFF."
+            },
+            {
+                id: 3,
+                title: "Power Transition",
+                icon: "fa-plug",
+                tasks: [
+                    "Turn off fans, water pump, and AC.",
+                    "Move the knob to Center (0).",
+                    "Turn off the Generator.",
+                    "Plug the Power Cable into the power port.",
+                    "Move the knob to Number 2 so the truck takes power from the port."
+                ],
+                useLetters: true,
+                instruction: "The truck is now running on shore power. Verify interior lights stay on."
+            },
+            {
+                id: 4,
+                title: "Vehicle Power",
+                icon: "fa-truck",
+                tasks: [
+                    "Turn off the truck engine.",
+                    "Turn off driving lights."
+                ],
+                useLetters: false,
+                instruction: "Ensure the keys are secured after ignition is off."
+            },
+            {
+                id: 5,
+                title: "Freshness & Storage",
+                icon: "fa-box-open",
+                tasks: [
+                    "Seal Cones, Waffles, and Cartwheels airtight (keep them fresh and crunchy).",
+                    "Seal all toppings.",
+                    "Put Oreos and Shortcake in the freezer.",
+                    "Leave sprinkles (rainbow and chocolate) outside but close them tightly."
+                ],
+                useLetters: true,
+                instruction: "Crunchy cones are our signature. Do not let air contact them!"
+            },
+            {
+                id: 6,
+                title: "Final Handover",
+                icon: "fa-file-invoice-dollar",
+                tasks: [
+                    "Count the money and put it in the bag.",
+                    "Do repair form if needed (only if you had a problem with truck, machine, or generator).",
+                    "Turn off inside light, outside light, and menu light.",
+                    "Take the money to the office (and repair form if you have one)."
+                ],
+                useLetters: true,
+                instruction: "Double check the Menu light! It is often forgotten."
+            }
+        ];
+
+        let currentStepIndex = 0;
+
+        function getLetter(index) {
+            return String.fromCharCode(97 + index); // 97 is 'a'
+        }
+
+        function renderStep() {
+            const step = steps[currentStepIndex];
+            const isLast = currentStepIndex === steps.length - 1;
+            const progress = ((currentStepIndex + 1) / steps.length) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+
+            let tasksHtml = step.tasks.map((task, idx) => {
+                const label = step.useLetters ? `${getLetter(idx)}) ` : '';
+                return `
+                <label class="flex items-start gap-4 p-4 bg-slate-50 rounded-xl mb-3 cursor-pointer active:bg-slate-100 transition-colors border border-slate-100">
+                    <div class="relative mt-1">
+                        <input type="checkbox" class="hidden task-checkbox" onchange="checkCompletion()">
+                        <div class="custom-checkbox">
+                            <i class="fas fa-check text-white text-xs hidden"></i>
+                        </div>
+                    </div>
+                    <span class="text-slate-700 font-medium leading-tight">
+                        <span class="text-blue-600 font-bold mr-1">${label}</span>${task}
+                    </span>
+                </label>
+            `}).join('');
+
+            const html = `
+                <div class="card bg-white p-6 step-transition animate-in fade-in slide-in-from-right-4 duration-300">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600">
+                            <i class="fas ${step.icon} text-xl"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-blue-500 uppercase tracking-widest">Step ${step.id} of ${steps.length}</span>
+                            <h2 class="text-xl font-bold text-slate-800">${step.title}</h2>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        ${tasksHtml}
+                    </div>
+
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 mb-8">
+                        <div class="flex gap-3">
+                            <i class="fas fa-circle-info text-amber-500 mt-1"></i>
+                            <p class="text-sm text-amber-800 italic font-medium">${step.instruction}</p>
+                        </div>
+                    </div>
+
+                    <button id="nextBtn" disabled onclick="nextStep()" 
+                        class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-200 disabled:opacity-50 disabled:shadow-none transition-all active:scale-95">
+                        ${isLast ? 'Finish Closing' : 'Next Step'}
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('appContent').innerHTML = html;
+        }
+
+        function checkCompletion() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('nextBtn').disabled = !allChecked;
+        }
+
+        function nextStep() {
+            if (currentStepIndex < steps.length - 1) {
+                currentStepIndex++;
+                window.scrollTo(0, 0);
+                renderStep();
+            } else {
+                showCongrats();
+            }
+        }
+
+        function resetApp() {
+            currentStepIndex = 0;
+            renderStep();
+        }
+
+        function showCongrats() {
+            document.getElementById('progressBar').style.width = '100%';
+            const html = `
+                <div class="card bg-white p-8 text-center animate-in zoom-in duration-500">
+                    <div class="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6">
+                        <i class="fas fa-check-double text-4xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-black text-slate-800 mb-2 tracking-tight">CONGRATS!</h2>
+                    <p class="text-slate-500 mb-8 leading-relaxed">The truck is clean, the product is fresh, and the business is secure.</p>
+                    
+                    <div class="p-6 bg-blue-50 rounded-2xl mb-8 border border-blue-100">
+                        <span class="block text-blue-600 font-black text-2xl uppercase tracking-tighter">Closing Finished</span>
+                        <span class="text-blue-400 font-medium">Have a safe trip home!</span>
+                    </div>
+
+                    <button onclick="resetApp()" class="w-full py-4 bg-slate-800 text-white rounded-2xl font-bold text-lg transition-all active:scale-95">
+                        <i class="fas fa-redo mr-2"></i> Start New Shift
+                    </button>
+                </div>
+            `;
+            document.getElementById('appContent').innerHTML = html;
+            createConfetti();
+        }
+
+        function createConfetti() {
+            for(let i=0; i<60; i++) {
+                const div = document.createElement('div');
+                div.className = 'confetti-piece';
+                div.style.left = Math.random() * 100 + 'vw';
+                div.style.backgroundColor = ['#3b82f6', '#ffd300', '#ef4444', '#10b981', '#f472b6'][Math.floor(Math.random() * 5)];
+                div.style.transform = `rotate(${Math.random() * 360}deg)`;
+                document.body.appendChild(div);
+                
+                const animation = div.animate([
+                    { top: '-20px', opacity: 1 },
+                    { top: '100vh', opacity: 0 }
+                ], {
+                    duration: Math.random() * 2000 + 2000,
+                    easing: 'cubic-bezier(0, .9, .57, 1)'
+                });
+                animation.onfinish = () => div.remove();
+            }
+        }
+
+        // Initialize
+        window.onload = renderStep;
+    </script>
+</body>
+</html>
+
+```
