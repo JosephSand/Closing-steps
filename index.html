@@ -78,17 +78,18 @@
                     "Throw the garbage from the truck into the dumpster."
                 ],
                 useLetters: false,
-                instruction: "Ensure no bags are left inside the vehicle overnight to prevent odors/pests."
+                instruction: "Ensure no bags are left inside the vehicle overnight."
             },
             {
                 id: 2,
-                title: "Machine Shutdown",
+                title: "Machine & Payment",
                 icon: "fa-ice-cream",
                 tasks: [
-                    "Turn off the Ice Cream Machine."
+                    "Turn off the Ice Cream Machine.",
+                    "Connect the Square reader."
                 ],
-                useLetters: false,
-                instruction: "Check the panel instructions. Ensure the toggle is set to OFF."
+                useLetters: true,
+                instruction: "Ensure the machine is fully OFF and the reader is charging for tomorrow."
             },
             {
                 id: 3,
@@ -113,7 +114,7 @@
                     "Turn off driving lights."
                 ],
                 useLetters: false,
-                instruction: "Ensure the keys are secured after ignition is off."
+                instruction: "Secure the keys once the engine is off."
             },
             {
                 id: 5,
@@ -123,10 +124,11 @@
                     "Seal Cones, Waffles, and Cartwheels airtight (keep them fresh and crunchy).",
                     "Seal all toppings.",
                     "Put Oreos and Shortcake in the freezer.",
-                    "Leave sprinkles (rainbow and chocolate) outside but close them tightly."
+                    "Leave sprinkles (rainbow and chocolate) outside but close them tightly.",
+                    "Close the milk and put it in the fridge if you have it outside."
                 ],
                 useLetters: true,
-                instruction: "Crunchy cones are our signature. Do not let air contact them!"
+                instruction: "Crunchy cones and cold milk are vital for quality!"
             },
             {
                 id: 6,
@@ -146,7 +148,7 @@
         let currentStepIndex = 0;
 
         function getLetter(index) {
-            return String.fromCharCode(97 + index); // 97 is 'a'
+            return String.fromCharCode(97 + index); 
         }
 
         function renderStep() {
@@ -269,9 +271,7 @@
             }
         }
 
-        // Initialize
         window.onload = renderStep;
     </script>
 </body>
 </html>
-
